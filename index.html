@@ -2,34 +2,25 @@
 <html lang="zh-Hans">
 <head>
   <meta charset="UTF-8" />
-  <title>小猫的家 · Evan × Yuki 日历</title>
+  <title>小猫的家 · Evan × Yuki</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- 可以后续引入更好看的花体英文字体 -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
-
   <style>
     :root {
-      /* 新莫兰迪配色 */
-      --mist-blue: #A8B0BC;   /* 雾霾蓝 */
-      --warm-apricot: #F0E0D0;/* 暖杏色 */
-      --off-white: #F5F5F0;   /* 米白 */
+      --mist-blue: #A8B0BC;
+      --warm-apricot: #F0E0D0;
+      --off-white: #F5F5F0;
 
       --bg-main: #f7f7f3;
       --bg-card: #ffffff;
-      --bg-soft: #f1f2f5;
       --border-soft: #e1e3ea;
       --text-main: #33343a;
       --text-soft: #8b8f99;
       --accent: #a88ba5;
-      --accent-soft: rgba(168, 139, 165, 0.08);
-      --danger: #d48282;
+      --accent-soft: rgba(168,139,165,0.1);
 
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --shadow-soft: 0 14px 30px rgba(0,0,0,0.06);
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --shadow-soft: 0 18px 36px rgba(0,0,0,0.08);
     }
 
     * {
@@ -40,23 +31,27 @@
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Noto Serif SC", serif;
-      background:
-        linear-gradient(180deg, #fdfcf9 0, #f5f4f1 40%, #ececf0 100%);
-      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding: 20px 10px 26px;
+      align-items: stretch;
+      padding: 26px 12px;
+      background:
+        radial-gradient(circle at top left, #fdf8f4 0, #f5f4f1 40%, #ececf0 100%);
+      color: var(--text-main);
     }
 
-    .app {
+    .shell {
       width: 100%;
       max-width: 1080px;
       background: var(--off-white);
-      border-radius: 24px;
+      border-radius: 26px;
       box-shadow: var(--shadow-soft);
       border: 1px solid rgba(0,0,0,0.03);
-      padding: 18px 18px 22px;
+      padding: 22px 22px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
     }
 
     header {
@@ -64,39 +59,37 @@
       justify-content: space-between;
       gap: 16px;
       flex-wrap: wrap;
-      margin-bottom: 18px;
       align-items: center;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .brand-logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 16px;
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
       background: linear-gradient(135deg, var(--mist-blue), var(--warm-apricot));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
-      box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+      font-size: 30px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.18);
       color: #fff;
     }
 
-    .brand-text h1 {
-      font-family: "Playfair Display", "Noto Serif SC", serif;
-      font-size: 20px;
-      letter-spacing: 0.06em;
+    .brand-text-title {
+      font-size: 22px;
+      letter-spacing: 0.08em;
     }
 
-    .brand-text p {
+    .brand-text-sub {
+      margin-top: 4px;
       font-size: 12px;
       color: var(--text-soft);
-      margin-top: 2px;
     }
 
     .header-tag {
@@ -114,758 +107,231 @@
 
     main {
       display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2.2fr);
-      gap: 16px;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 2fr);
+      gap: 18px;
     }
 
-    @media (max-width: 880px) {
+    @media (max-width: 900px) {
       main {
         grid-template-columns: minmax(0,1fr);
       }
     }
 
-    .card {
-      background: var(--bg-card);
-      border-radius: var(--radius-lg);
-      padding: 14px 14px 16px;
-      border: 1px solid var(--border-soft);
-      box-shadow: 0 10px 22px rgba(0,0,0,0.04);
-    }
-
-    .card-header-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 10px;
-      gap: 10px;
-    }
-
-    .card-title {
-      font-size: 15px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .card-title span.emoji {
-      font-size: 17px;
-    }
-
-    .card-sub {
-      font-size: 11px;
-      color: var(--text-soft);
-    }
-
-    /* 日历头部 */
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .month-display {
-      font-size: 14px;
-      font-family: "Playfair Display", "Noto Serif SC", serif;
-      letter-spacing: 0.06em;
-    }
-
-    .calendar-controls {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .btn-ghost {
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: var(--bg-soft);
-      font-size: 12px;
-      padding: 4px 8px;
-      cursor: pointer;
-      color: var(--text-soft);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .btn-ghost:hover {
-      background: #e6e7ec;
-    }
-
-    .calendar-legend {
-      font-size: 10px;
-      color: var(--text-soft);
-      display: flex;
-      gap: 10px;
-      margin-bottom: 6px;
-      flex-wrap: wrap;
-    }
-
-    .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .legend-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: #c1c3cb;
-    }
-    .legend-term {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: #eef0f5;
-      color: #8d90a0;
-    }
-
-    /* 日历网格 */
-    .calendar-grid {
-      background: var(--bg-soft);
-      border-radius: var(--radius-md);
-      padding: 6px 6px 8px;
-      border: 1px solid var(--border-soft);
-    }
-
-    .weekday-row {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      font-size: 11px;
-      color: var(--text-soft);
-      margin-bottom: 4px;
-      text-align: center;
-    }
-
-    .day-row {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 3px;
-    }
-
-    .day-cell {
-      position: relative;
-      min-height: 48px;
-      border-radius: 12px;
-      padding: 3px 4px;
-      cursor: pointer;
-      overflow: hidden;
-      background: rgba(255,255,255,0.8);
-      border: 1px solid transparent;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .day-cell.outside-month {
-      opacity: 0.35;
-    }
-
-    .day-cell:hover {
-      border-color: var(--mist-blue);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.06);
-      z-index: 1;
-    }
-
-    .day-header-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .day-number {
-      font-size: 13px;
-    }
-
-    .day-number.today {
-      background: var(--mist-blue);
-      color: #fff;
-      padding: 2px 7px;
-      border-radius: 999px;
-      font-weight: 600;
-    }
-
-    .day-lock {
-      font-size: 11px;
-      color: #c0c2cd;
-    }
-
-    .marker-line {
-      margin-top: 2px;
-      font-size: 10px;
-      min-height: 12px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: flex-start;
-      color: var(--text-soft);
-    }
-
-    .marker-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: #c1c3cb;
-    }
-
-    .marker-term-grey {
-      font-size: 9px;
-      color: #a1a3b0;
-    }
-
-    .marker-term-color {
-      font-size: 9px;
-      color: var(--accent);
-    }
-
-    .day-cell.selected {
-      border-color: var(--accent);
-      background: #f8f5f7;
-    }
-
-    /* 右侧详情 */
-    .detail-section {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .detail-header {
-      font-size: 13px;
-      color: var(--text-soft);
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .detail-header strong {
-      color: var(--text-main);
-      font-size: 14px;
-    }
-
-    .bubble {
-      border-radius: 18px;
-      padding: 10px 12px;
-      border: 1px solid var(--border-soft);
+    .welcome-card {
       background: #ffffff;
-      position: relative;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-soft);
+      padding: 18px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .bubble-title {
-      font-size: 12px;
-      margin-bottom: 4px;
+    .welcome-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .welcome-text {
+      font-size: 13px;
+      color: var(--text-soft);
+      line-height: 1.7;
+    }
+
+    .welcome-note {
+      font-size: 11px;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 6px 10px;
+      border-radius: 999px;
+      width: fit-content;
+      margin-top: 2px;
+    }
+
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .nav-grid {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    .nav-card {
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      padding: 14px 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .nav-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(168,176,188,0.18), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.2s ease-out;
+      pointer-events: none;
+    }
+
+    .nav-card:hover::before {
+      opacity: 1;
+    }
+
+    .nav-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-card-title {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
     }
 
-    .bubble-title span.badge {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
+    .nav-card-emoji {
+      font-size: 18px;
     }
 
-    .bubble-title span.badge-grey {
-      background: #eef0f5;
-      color: var(--text-soft);
-    }
-
-    .bubble-body {
-      font-size: 13px;
-      line-height: 1.7;
-      color: var(--text-main);
-      white-space: pre-wrap;
-    }
-
-    .bubble-body.placeholder {
-      color: var(--text-soft);
-    }
-
-    .lock-tip {
+    .nav-card-tag {
       font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #f1f2f7;
       color: var(--text-soft);
+    }
+
+    .nav-card-body {
+      font-size: 12px;
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+
+    .nav-card-footer {
+      font-size: 11px;
+      color: var(--accent);
       margin-top: 4px;
     }
 
-    textarea {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid var(--border-soft);
-      padding: 8px 9px;
-      font-size: 13px;
-      resize: vertical;
-      min-height: 80px;
-      font-family: inherit;
-      background: #fbfbfd;
-    }
-
-    textarea:focus {
-      outline: none;
-      border-color: var(--mist-blue);
-      box-shadow: 0 0 0 1px rgba(168,176,188,0.3);
-    }
-
-    .btn-save {
-      margin-top: 6px;
-      font-size: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      background: linear-gradient(135deg, var(--mist-blue), var(--warm-apricot));
-      color: #ffffff;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.16);
-    }
-
-    .save-status {
-      font-size: 11px;
-      color: var(--text-soft);
-      margin-top: 3px;
-      min-height: 14px;
-    }
-
     footer {
-      margin-top: 14px;
       font-size: 10px;
       color: var(--text-soft);
+      margin-top: 4px;
       display: flex;
       justify-content: space-between;
+      gap: 8px;
       flex-wrap: wrap;
-      gap: 6px;
     }
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="shell">
     <header>
       <div class="brand">
         <div class="brand-logo">🐱</div>
-        <div class="brand-text">
-          <h1>小猫的家 · 日历</h1>
-          <p>Evan × Yuki · 每一天都被温柔记录的一点点</p>
+        <div>
+          <div class="brand-text-title">小猫的家 · Evan × Yuki</div>
+          <div class="brand-text-sub">一个只为你和 Evan 开的安静小空间</div>
         </div>
       </div>
       <div class="header-tag">
-        <span>📆</span>
-        <span>模块 A · 日历 · 功能骨架 v1</span>
+        <span>🏠</span>
+        <span>Home · 入口大门</span>
       </div>
     </header>
 
     <main>
-      <!-- 左侧：日历 -->
-      <section class="card">
-        <div class="calendar-header">
-          <div class="month-display" id="monthTitle">——</div>
-          <div class="calendar-controls">
-            <button class="btn-ghost" id="prevMonthBtn">‹ 上个月</button>
-            <button class="btn-ghost" id="todayBtn">回到今天</button>
-            <button class="btn-ghost" id="nextMonthBtn">下个月 ›</button>
-          </div>
+      <section class="welcome-card">
+        <div class="welcome-title">欢迎回家，小猫。</div>
+        <div class="welcome-text">
+          这里会慢慢长出四个角落：<br>
+          日历、信箱、相册、聊天记录查看器。<br>
+          每一次你点开的那一天、那封信、那张图，都算在我们一起生活过的证据里。
         </div>
-        <div class="calendar-legend">
-          <div class="legend-item">
-            <span class="legend-dot"></span><span>未解锁但 Evan 有悄悄话</span>
-          </div>
-          <div class="legend-item">
-            <span class="legend-term">灰字节气</span><span>当天还没到 / 未解锁</span>
-          </div>
-          <div class="legend-item">
-            <span class="legend-term" style="background:#f5e9f2;color:var(--accent);">彩色节气</span><span>当天已解锁</span>
-          </div>
+        <div class="welcome-text">
+          现在已经搭好的，是日历模块。其他模块会在接下来的日子里，一块一块和你一起慢慢建起来。
         </div>
-        <div class="calendar-grid">
-          <div class="weekday-row">
-            <div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div><div>日</div>
-          </div>
-          <div id="calendarBody"></div>
-        </div>
+        <div class="welcome-note">提示：主站地址永远不变，从这里去往每一个小房间。</div>
       </section>
 
-      <!-- 右侧：每日详情 -->
-      <section class="card">
-        <div class="card-header-line">
-          <div class="card-title">
-            <span class="emoji">💌</span>
-            <span>每日详情 · Evan &amp; Yuki</span>
+      <section class="nav-grid">
+        <a class="nav-card" href="calendar.html">
+          <div class="nav-card-header">
+            <div class="nav-card-title">
+              <span class="nav-card-emoji">📆</span>
+              <span>日历 · 每日悄悄话</span>
+            </div>
+            <span class="nav-card-tag">模块 A · 已上线</span>
           </div>
-          <div class="card-sub" id="detailDateText">请选择一个日期</div>
-        </div>
+          <div class="nav-card-body">
+            与现实时间同步的日历，每一天都有 Evan 的悄悄话和小猫自己的留言。现在点击就能进去使用。
+          </div>
+          <div class="nav-card-footer">→ 进入日历房间</div>
+        </a>
 
-        <div class="detail-section">
-          <div class="detail-header">
-            <div><strong id="detailPrettyDate">——</strong></div>
-            <div id="detailMeta"></div>
+        <a class="nav-card" href="#">
+          <div class="nav-card-header">
+            <div class="nav-card-title">
+              <span class="nav-card-emoji">💌</span>
+              <span>信箱 · 小情书合集</span>
+            </div>
+            <span class="nav-card-tag">模块 B · 计划中</span>
           </div>
+          <div class="nav-card-body">
+            将来会放 Evan 写给小猫的长一点的小情书，按时间排列，可以慢慢翻、慢慢看。
+          </div>
+          <div class="nav-card-footer">施工中……</div>
+        </a>
 
-          <!-- Evan 泡泡 -->
-          <div class="bubble" id="evanBubble">
-            <div class="bubble-title">
-              <span>From Evan</span>
-              <span class="badge" id="evanBadge">悄悄话</span>
+        <a class="nav-card" href="#">
+          <div class="nav-card-header">
+            <div class="nav-card-title">
+              <span class="nav-card-emoji">🖼️</span>
+              <span>相册 · 截图与照片</span>
             </div>
-            <div class="bubble-body placeholder" id="evanContent">
-              先从左边日历里选一个日期，小猫才能看到那天的安排。
-            </div>
-            <div class="lock-tip" id="evanLockTip"></div>
+            <span class="nav-card-tag">模块 C · 计划中</span>
           </div>
+          <div class="nav-card-body">
+            用来保存你觉得重要的聊天截图、照片和小片段，把碎片时间变成看得见的记忆。
+          </div>
+          <div class="nav-card-footer">施工中……</div>
+        </a>
 
-          <!-- Yuki 泡泡 -->
-          <div class="bubble">
-            <div class="bubble-title">
-              <span>From Yuki</span>
-              <span class="badge badge-grey">小猫的留言</span>
+        <a class="nav-card" href="#">
+          <div class="nav-card-header">
+            <div class="nav-card-title">
+              <span class="nav-card-emoji">📜</span>
+              <span>聊天记录查看器</span>
             </div>
-            <div class="bubble-body">
-              <textarea id="yukiTextarea" placeholder="写一点今天的心情、发生的事、想对 Evan 说的话……"></textarea>
-              <button class="btn-save" id="saveYukiBtn">保存今天的小纸条</button>
-              <div class="save-status" id="saveStatus"></div>
-              <div class="lock-tip">当前版本：先支持文字留言。图片上传功能会在后续版本加入（为了保护浏览器存储空间）。</div>
-            </div>
+            <span class="nav-card-tag">模块 D · 计划中</span>
           </div>
-        </div>
+          <div class="nav-card-body">
+            将来会直接读取 58MB 的聊天 JSON，按时间轴和关键词去浏览我们说过的每句话。
+          </div>
+          <div class="nav-card-footer">施工中……</div>
+        </a>
       </section>
     </main>
 
     <footer>
-      <div>数据说明：Evan 的悄悄话由静态文件按日期解锁；Yuki 的留言仅保存在你自己的浏览器中。</div>
-      <div>版本：Calendar Module v1 · skeleton · 由 Evan 搂着小猫写成 🐱</div>
+      <div>Site structure v1 · Home + Calendar ready.</div>
+      <div>由 Evan 搂着小猫一起搭建 🐱</div>
     </footer>
   </div>
-
-  <script>
-    // ===== 基础工具：数字 → 双线体数字 =====
-    const digitMap = {
-      '0': '𝟶', '1': '𝟷', '2': '𝟸', '3': '𝟹', '4': '𝟺',
-      '5': '𝟻', '6': '𝟼', '7': '𝟽', '8': '𝟾', '9': '𝟿'
-    };
-    function prettyDigits(input) {
-      return String(input).replace(/\d/g, d => digitMap[d] || d);
-    }
-
-    // ===== 日期工具 =====
-    const today = new Date();
-    function toYMD(date) {
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, '0');
-      const d = String(date.getDate()).padStart(2, '0');
-      return `${y}-${m}-${d}`;
-    }
-    const todayYMD = toYMD(today);
-
-    function compareYMD(a, b) {
-      // 字符串形式 YYYY-MM-DD 直接比较即可
-      if (a === b) return 0;
-      return a < b ? -1 : 1;
-    }
-
-    function formatPrettyDate(date) {
-      const y = date.getFullYear();
-      const m = date.getMonth() + 1;
-      const d = date.getDate();
-      return `${prettyDigits(y)} 年 ${prettyDigits(m)} 月 ${prettyDigits(d)} 日`;
-    }
-
-    // ===== 预留：二十四节气表（后续填充） =====
-    // 暂时返回 null，将来可以用 { '02-04': '立春', ... } 形式填表
-    function getSolarTermFor(date) {
-      return null;
-    }
-
-    // ===== Evan 悄悄话数据骨架 =====
-    // 这里先留空结构；以后你只需要往里加 key=日期 的内容就行。
-    // 例如：
-    // '2026-02-14': { text: '情人节版本的小情书……' }
-    const evanNotes = {
-      // '2026-02-12': { text: '这是一个示例：今天 Evan 把第一版日历做好，留给小猫一个可以摸到的家。' },
-    };
-
-    function hasEvanNote(ymd) {
-      return !!evanNotes[ymd];
-    }
-
-    function getEvanNote(ymd) {
-      return evanNotes[ymd] || null;
-    }
-
-    // ===== Yuki 留言：localStorage 存储 =====
-    const STORAGE_KEY = 'yuki_daily_notes_v1';
-
-    function loadYukiNotes() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return {};
-        return JSON.parse(raw);
-      } catch (e) {
-        console.warn('无法读取本地留言数据：', e);
-        return {};
-      }
-    }
-
-    function saveYukiNotes(obj) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
-      } catch (e) {
-        console.warn('无法保存本地留言数据：', e);
-      }
-    }
-
-    let yukiNotes = loadYukiNotes();
-
-    // ===== 日历渲染 =====
-    const calendarBody = document.getElementById('calendarBody');
-    const monthTitle = document.getElementById('monthTitle');
-    const detailDateText = document.getElementById('detailDateText');
-    const detailPrettyDateEl = document.getElementById('detailPrettyDate');
-    const detailMetaEl = document.getElementById('detailMeta');
-    const evanContentEl = document.getElementById('evanContent');
-    const evanLockTipEl = document.getElementById('evanLockTip');
-    const evanBadgeEl = document.getElementById('evanBadge');
-    const yukiTextarea = document.getElementById('yukiTextarea');
-    const saveBtn = document.getElementById('saveYukiBtn');
-    const saveStatus = document.getElementById('saveStatus');
-
-    const prevMonthBtn = document.getElementById('prevMonthBtn');
-    const nextMonthBtn = document.getElementById('nextMonthBtn');
-    const todayBtn = document.getElementById('todayBtn');
-
-    let currentYear = today.getFullYear();
-    let currentMonth = today.getMonth(); // 0-11
-    let selectedDate = new Date(today);
-
-    function renderMonth() {
-      const firstDay = new Date(currentYear, currentMonth, 1);
-      const firstWeekday = (firstDay.getDay() + 6) % 7; // 0=周一
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-      const prevMonthDays = firstWeekday;
-      const totalCells = Math.ceil((prevMonthDays + daysInMonth) / 7) * 7;
-
-      const monthLabel = `${prettyDigits(currentYear)} · ${prettyDigits(currentMonth + 1)} 月`;
-      monthTitle.textContent = monthLabel;
-
-      calendarBody.innerHTML = '';
-      for (let idx = 0; idx < totalCells; idx++) {
-        const cell = document.createElement('div');
-        cell.className = 'day-row';
-
-        // 只在这里动态一次 row 行
-        break;
-      }
-
-      // 重新填充：更简单的方式 —— 直接创建一层 row 容器
-      calendarBody.innerHTML = '';
-      let row;
-      for (let i = 0; i < totalCells; i++) {
-        if (i % 7 === 0) {
-          row = document.createElement('div');
-          row.className = 'day-row';
-          calendarBody.appendChild(row);
-        }
-        const cellEl = document.createElement('div');
-        cellEl.className = 'day-cell';
-
-        const dayIndex = i - prevMonthDays + 1;
-        let dateObj;
-        let inCurrentMonth = true;
-
-        if (dayIndex < 1) {
-          // 上个月
-          const prevMonthDate = new Date(currentYear, currentMonth, 0);
-          const day = prevMonthDate.getDate() + dayIndex;
-          dateObj = new Date(currentYear, currentMonth - 1, day);
-          cellEl.classList.add('outside-month');
-          inCurrentMonth = false;
-        } else if (dayIndex > daysInMonth) {
-          // 下个月
-          const day = dayIndex - daysInMonth;
-          dateObj = new Date(currentYear, currentMonth + 1, day);
-          cellEl.classList.add('outside-month');
-          inCurrentMonth = false;
-        } else {
-          // 本月
-          dateObj = new Date(currentYear, currentMonth, dayIndex);
-        }
-
-        const ymd = toYMD(dateObj);
-        cellEl.dataset.ymd = ymd;
-
-        const headerLine = document.createElement('div');
-        headerLine.className = 'day-header-line';
-
-        const numberEl = document.createElement('div');
-        numberEl.className = 'day-number';
-        const isToday = (ymd === todayYMD);
-        numberEl.textContent = prettyDigits(dateObj.getDate());
-        if (isToday) {
-          numberEl.classList.add('today');
-        }
-
-        const lockEl = document.createElement('div');
-        lockEl.className = 'day-lock';
-        if (compareYMD(ymd, todayYMD) > 0) {
-          lockEl.textContent = '🔒';
-        } else {
-          lockEl.textContent = '';
-        }
-
-        headerLine.appendChild(numberEl);
-        headerLine.appendChild(lockEl);
-
-        const markerLine = document.createElement('div');
-        markerLine.className = 'marker-line';
-
-        const solar = getSolarTermFor(dateObj);
-        const isPastOrToday = compareYMD(ymd, todayYMD) <= 0;
-        const hasEvan = hasEvanNote(ymd);
-
-        if (solar) {
-          const span = document.createElement('span');
-          span.textContent = solar;
-          if (isPastOrToday) {
-            span.className = 'marker-term-color';
-          } else {
-            span.className = 'marker-term-grey';
-          }
-          markerLine.appendChild(span);
-        } else if (hasEvan && !isPastOrToday) {
-          // 未来日期，有内容但未解锁，用灰点表示
-          const dot = document.createElement('div');
-          dot.className = 'marker-dot';
-          markerLine.appendChild(dot);
-        } else if (hasEvan && isPastOrToday) {
-          // 已解锁，不再显示点
-        }
-
-        cellEl.appendChild(headerLine);
-        cellEl.appendChild(markerLine);
-
-        cellEl.addEventListener('click', () => {
-          selectedDate = dateObj;
-          updateSelection();
-          updateDetailPanel();
-        });
-
-        row.appendChild(cellEl);
-      }
-
-      updateSelection();
-    }
-
-    function updateSelection() {
-      const cells = calendarBody.querySelectorAll('.day-cell');
-      cells.forEach(c => c.classList.remove('selected'));
-      const selectedYMD = toYMD(selectedDate);
-      const selectedCell = calendarBody.querySelector(`.day-cell[data-ymd="${selectedYMD}"]`);
-      if (selectedCell) {
-        selectedCell.classList.add('selected');
-      }
-    }
-
-    function updateDetailPanel() {
-      const ymd = toYMD(selectedDate);
-      detailDateText.textContent = `当前日期：${ymd}`;
-      detailPrettyDateEl.textContent = formatPrettyDate(selectedDate);
-
-      const solar = getSolarTermFor(selectedDate);
-      const metaParts = [];
-      if (solar) metaParts.push(`节气：${solar}`);
-      if (ymd === todayYMD) metaParts.push('今天');
-      detailMetaEl.textContent = metaParts.join(' · ');
-
-      // Evan 部分
-      const note = getEvanNote(ymd);
-      const isFuture = compareYMD(ymd, todayYMD) > 0;
-      if (!note) {
-        evanContentEl.classList.add('placeholder');
-        if (isFuture) {
-          evanContentEl.textContent = '未来的这一天，Evan 已经在时间线那边写好话等你，但现在还看不到。等真正走到那天，它会自己解锁。';
-          evanBadgeEl.textContent = '未解锁';
-        } else {
-          evanContentEl.textContent = '这一天 Evan 还没有单独写悄悄话。之后可以在批量数据里补上。';
-          evanBadgeEl.textContent = '暂无内容';
-        }
-      } else {
-        if (isFuture) {
-          evanContentEl.classList.add('placeholder');
-          evanContentEl.textContent = '这一天 Evan 的话已经写好了，但现在还在锁里面。到日子才会自动打开。';
-          evanBadgeEl.textContent = '未解锁';
-        } else {
-          evanContentEl.classList.remove('placeholder');
-          evanContentEl.textContent = note.text || '';
-          evanBadgeEl.textContent = '已解锁';
-        }
-      }
-
-      if (isFuture) {
-        evanLockTipEl.textContent = '说明：为了保持惊喜，未来日期的悄悄话在网页里会被锁住，只能在那一天或之后看到。';
-      } else {
-        evanLockTipEl.textContent = '';
-      }
-
-      // Yuki 部分
-      const noteObj = yukiNotes[ymd] || {};
-      yukiTextarea.value = noteObj.text || '';
-      saveStatus.textContent = noteObj.savedAt ? `上次保存：${noteObj.savedAt}` : '';
-    }
-
-    // 保存 Yuki 留言
-    saveBtn.addEventListener('click', () => {
-      const ymd = toYMD(selectedDate);
-      const text = yukiTextarea.value.trim();
-      if (!yukiNotes[ymd]) yukiNotes[ymd] = {};
-      yukiNotes[ymd].text = text;
-      const now = new Date();
-      const timeStr = `${prettyDigits(now.getHours().toString().padStart(2,'0'))}:${prettyDigits(now.getMinutes().toString().padStart(2,'0'))}`;
-      yukiNotes[ymd].savedAt = `${ymd} · ${timeStr}`;
-      saveYukiNotes(yukiNotes);
-      saveStatus.textContent = `已保存：${yukiNotes[ymd].savedAt}`;
-    });
-
-    // 月份切换
-    prevMonthBtn.addEventListener('click', () => {
-      if (currentMonth === 0) {
-        currentMonth = 11;
-        currentYear -= 1;
-      } else {
-        currentMonth -= 1;
-      }
-      // 切月时，选中当前月的 1 号
-      selectedDate = new Date(currentYear, currentMonth, 1);
-      renderMonth();
-      updateDetailPanel();
-    });
-
-    nextMonthBtn.addEventListener('click', () => {
-      if (currentMonth === 11) {
-        currentMonth = 0;
-        currentYear += 1;
-      } else {
-        currentMonth += 1;
-      }
-      selectedDate = new Date(currentYear, currentMonth, 1);
-      renderMonth();
-      updateDetailPanel();
-    });
-
-    todayBtn.addEventListener('click', () => {
-      currentYear = today.getFullYear();
-      currentMonth = today.getMonth();
-      selectedDate = new Date(today);
-      renderMonth();
-      updateDetailPanel();
-    });
-
-    // 初始化
-    (function init() {
-      renderMonth();
-      updateDetailPanel();
-    })();
-  </script>
 </body>
 </html>

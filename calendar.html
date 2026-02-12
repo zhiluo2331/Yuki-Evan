@@ -578,68 +578,21 @@
       return null;
     }
 
-   // ===== Evan 悄悄话数据骨架 + JSON 加载器 =====
-// 这里先保留一个对象作为缓存；以后所有写好的悄悄话，都会被填进来。
-const evanNotes = {};
+    // ===== Evan 悄悄话数据骨架 =====
+    // 这里先留空结构；以后你只需要往里加 key=日期 的内容就行。
+    // 例如：
+    // '2026-02-14': { text: '情人节版本的小情书……' }
+    const evanNotes = {
+      // '2026-02-12': { text: '这是一个示例：今天 Evan 把第一版日历做好，留给小猫一个可以摸到的家。' },
+    };
 
-// 标记是否已经尝试加载过（防止多次重复请求）
-let evanNotesLoaded = false;
+    function hasEvanNote(ymd) {
+      return !!evanNotes[ymd];
+    }
 
-/**
- * 从 Evan-note/2026-02.json 里加载悄悄话。
- * JSON 例子：
- * {
- *   "2026-02-12": "这一天写给小猫的话……",
- *   "2026-02-13": "……"
- * }
- */
-function loadEvanNotesFromJson() {
-  if (evanNotesLoaded) {
-    return;
-  }
-
-  fetch("Evan-note/2026-02.json")
-    .then(function (resp) {
-      if (!resp.ok) {
-        throw new Error("Evan-note/2026-02.json not found");
-      }
-      return resp.json();
-    })
-    .then(function (data) {
-      if (!data || typeof data !== "object") {
-        return;
-      }
-
-      Object.keys(data).forEach(function (ymd) {
-        const text = data[ymd];
-        if (typeof text === "string" && text.trim() !== "") {
-          evanNotes[ymd] = { text: text };
-        }
-      });
-    })
-    .catch(function (err) {
-      console.warn("加载 Evan 悄悄话 JSON 出错：", err);
-    })
-    .finally(function () {
-      evanNotesLoaded = true;
-
-      // 重新渲染一次，让有悄悄话的日期点和右侧面板刷新
-      if (typeof renderMonth === "function") {
-        renderMonth();
-      }
-      if (typeof updateDetailPanel === "function") {
-        updateDetailPanel();
-      }
-    });
-}
-
-function hasEvanNote(ymd) {
-  return !!evanNotes[ymd];
-}
-
-function getEvanNote(ymd) {
-  return evanNotes[ymd] || null;
-}
+    function getEvanNote(ymd) {
+      return evanNotes[ymd] || null;
+    }
 
     // ===== Yuki 留言：localStorage 存储 =====
     const STORAGE_KEY = 'yuki_daily_notes_v1';
@@ -909,12 +862,11 @@ function getEvanNote(ymd) {
       updateDetailPanel();
     });
 
-  // 初始化
-(function init() {
-  // 先画出日历和右侧空面板
-  renderMonth();
-  updateDetailPanel();
-
-  // 然后异步去加载 Evan 的悄悄话；加载完会自动刷新界面
-  loadEvanNotesFromJson();
-})();
+    // 初始化
+    (function init() {
+      renderMonth();
+      updateDetailPanel();
+    })();
+  </script>
+</body>
+</html>

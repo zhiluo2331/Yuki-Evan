@@ -579,8 +579,9 @@
       return null;
     }
 
-    // ===== Evan 悄悄话数据骨架 =====
+// ===== Evan 悄悄话数据骨架 =====
 const evanNotes = {};
+
 function loadEvanNotesFromJson() {
   const url = "Evan-note/2026-02.json";
 
@@ -622,22 +623,13 @@ function loadEvanNotesFromJson() {
     });
 }
 
-  // 塞完后刷新界面
-  if (typeof renderMonth === "function") {
-    renderMonth();
-  }
-  if (typeof updateDetailPanel === "function") {
-    updateDetailPanel();
-  }
+function hasEvanNote(ymd) {
+  return !!evanNotes[ymd];
 }
-    
-    function hasEvanNote(ymd) {
-      return !!evanNotes[ymd];
-    }
 
-    function getEvanNote(ymd) {
-      return evanNotes[ymd] || null;
-    }
+function getEvanNote(ymd) {
+  return evanNotes[ymd] || null;
+}
 
     // ===== Yuki 留言：localStorage 存储 =====
     const STORAGE_KEY = 'yuki_daily_notes_v1';

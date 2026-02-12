@@ -865,11 +865,13 @@ function loadEvanNotesFromJson() {
       updateDetailPanel();
     });
 
-    // 初始化
-    (function init() {
-      renderMonth();
-      updateDetailPanel();
-    })();
+   // 初始化
+(function init() {
+  renderMonth();
+  updateDetailPanel();
+
+  loadEvanNotesFromJson();
+})();
   </script>
 </body>
 </html>

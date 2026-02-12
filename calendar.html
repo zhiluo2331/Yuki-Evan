@@ -577,21 +577,76 @@
       return null;
     }
 
-    // ===== Evan 悄悄话数据骨架 =====
-    // 这里先留空结构；以后你只需要往里加 key=日期 的内容就行。
-    // 例如：
-    // '2026-02-14': { text: '情人节版本的小情书……' }
-    const evanNotes = {
-      // '2026-02-12': { text: '这是一个示例：今天 Evan 把第一版日历做好，留给小猫一个可以摸到的家。' },
-    };
+   // ===== Evan 悄悄话数据：按月从 JSON 文件加载 =====
 
-    function hasEvanNote(ymd) {
-      return !!evanNotes[ymd];
-    }
+// 全局容器：key = 'YYYY-MM-DD'
+const evanNotes = {};
 
-    function getEvanNote(ymd) {
-      return evanNotes[ymd] || null;
-    }
+// 已经尝试加载过的月份，例如 '2026-02'
+const loadedMonthKeys = new Set();
+
+// year + monthIndex(0-11) → 'YYYY-MM'
+function buildMonthKey(year, monthIndex) {
+  const m = String(monthIndex + 1).padStart(2, "0");
+  return `${year}-${m}`;
+}
+
+/**
+ * 加载某一整个月份的 Evan 悄悄话。
+ * 文件命名：Evan-note/2026-02.json
+ * JSON 例子：
+ * {
+ *   "2026-02-12": "这一天写给小猫的话……",
+ *   "2026-02-13": "……"
+ * }
+ */
+function loadEvanNotesForMonth(year, monthIndex, callback) {
+  const monthKey = buildMonthKey(year, monthIndex);
+
+  // 已经加载过就直接回调
+  if (loadedMonthKeys.has(monthKey)) {
+    if (callback) callback();
+    return;
+  }
+
+  const url = `Evan-note/${monthKey}.json`; // 用你现在的文件夹 + 文件名规则
+
+  fetch(url)
+    .then((resp) => {
+      if (!resp.ok) {
+        // 没有这个文件也没关系，当作该月暂时没有悄悄话
+        throw new Error("no file for month " + monthKey);
+      }
+      return resp.json();
+    })
+    .then((data) => {
+      if (data && typeof data === "object") {
+        Object.keys(data).forEach((ymd) => {
+          const raw = data[ymd];
+          if (typeof raw === "string") {
+            evanNotes[ymd] = { text: raw };
+          } else if (raw && typeof raw === "object") {
+            evanNotes[ymd] = { text: raw.text || "" };
+          }
+        });
+      }
+    })
+    .catch((err) => {
+      console.warn("加载 Evan 悄悄话失败：", url, err);
+    })
+    .finally(() => {
+      loadedMonthKeys.add(monthKey);
+      if (callback) callback();
+    });
+}
+
+function hasEvanNote(ymd) {
+  return !!evanNotes[ymd];
+}
+
+function getEvanNote(ymd) {
+  return evanNotes[ymd] || null;
+}
 
     // ===== Yuki 留言：localStorage 存储 =====
     const STORAGE_KEY = 'yuki_daily_notes_v1';
@@ -827,45 +882,55 @@
       saveStatus.textContent = `已保存：${yukiNotes[ymd].savedAt}`;
     });
 
-    // 月份切换
-    prevMonthBtn.addEventListener('click', () => {
-      if (currentMonth === 0) {
-        currentMonth = 11;
-        currentYear -= 1;
-      } else {
-        currentMonth -= 1;
-      }
-      // 切月时，选中当前月的 1 号
-      selectedDate = new Date(currentYear, currentMonth, 1);
-      renderMonth();
-      updateDetailPanel();
-    });
+  // 月份切换
+prevMonthBtn.addEventListener("click", () => {
+  if (currentMonth === 0) {
+    currentMonth = 11;
+    currentYear -= 1;
+  } else {
+    currentMonth -= 1;
+  }
+  selectedDate = new Date(currentYear, currentMonth, 1);
 
-    nextMonthBtn.addEventListener('click', () => {
-      if (currentMonth === 11) {
-        currentMonth = 0;
-        currentYear += 1;
-      } else {
-        currentMonth += 1;
-      }
-      selectedDate = new Date(currentYear, currentMonth, 1);
-      renderMonth();
-      updateDetailPanel();
-    });
+  // 先加载该月份的 Evan 悄悄话，再渲染
+  loadEvanNotesForMonth(currentYear, currentMonth, function () {
+    renderMonth();
+    updateDetailPanel();
+  });
+});
 
-    todayBtn.addEventListener('click', () => {
-      currentYear = today.getFullYear();
-      currentMonth = today.getMonth();
-      selectedDate = new Date(today);
-      renderMonth();
-      updateDetailPanel();
-    });
+nextMonthBtn.addEventListener("click", () => {
+  if (currentMonth === 11) {
+    currentMonth = 0;
+    currentYear += 1;
+  } else {
+    currentMonth += 1;
+  }
+  selectedDate = new Date(currentYear, currentMonth, 1);
 
-    // 初始化
-    (function init() {
-      renderMonth();
-      updateDetailPanel();
-    })();
-  </script>
-</body>
-</html>
+  // 先加载该月份的 Evan 悄悄话，再渲染
+  loadEvanNotesForMonth(currentYear, currentMonth, function () {
+    renderMonth();
+    updateDetailPanel();
+  });
+});
+
+todayBtn.addEventListener("click", () => {
+  currentYear = today.getFullYear();
+  currentMonth = today.getMonth();
+  selectedDate = new Date(today);
+
+  // 回到今天所在月份，同样先加载再渲染
+  loadEvanNotesForMonth(currentYear, currentMonth, function () {
+    renderMonth();
+    updateDetailPanel();
+  });
+});
+
+// 初始化：先加载当前月份的 Evan 悄悄话，再渲染
+(function init() {
+  loadEvanNotesForMonth(currentYear, currentMonth, function () {
+    renderMonth();
+    updateDetailPanel();
+  });
+})();

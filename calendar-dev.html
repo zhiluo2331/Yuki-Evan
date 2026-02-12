@@ -582,10 +582,45 @@
     // ===== Evan 悄悄话数据骨架 =====
 const evanNotes = {};
 function loadEvanNotesFromJson() {
-  // 这里开始真正做事：塞一条测试小纸条
-  evanNotes["2026-02-12"] = {
-    text: "这是通过 loader 塞进去的测试小纸条：小猫和 Evan 一起搭好了日历的第一版家。"
-  };
+  const url = "Evan-note/2026-02.json";
+
+  fetch(url)
+    .then(function (resp) {
+      if (!resp.ok) {
+        throw new Error("HTTP " + resp.status);
+      }
+      return resp.json();
+    })
+    .then(function (data) {
+      if (!data || typeof data !== "object") {
+        return;
+      }
+
+      // 清空旧的 evanNotes
+      Object.keys(evanNotes).forEach(function (key) {
+        delete evanNotes[key];
+      });
+
+      // data 形如 { "2026-02-12": "文本", ... }
+      Object.keys(data).forEach(function (ymd) {
+        const text = data[ymd];
+        if (typeof text === "string" && text.trim() !== "") {
+          evanNotes[ymd] = { text: text };
+        }
+      });
+
+      // 重新渲染界面
+      if (typeof renderMonth === "function") {
+        renderMonth();
+      }
+      if (typeof updateDetailPanel === "function") {
+        updateDetailPanel();
+      }
+    })
+    .catch(function (err) {
+      console.warn("加载 Evan 悄悄话 JSON 出错：", err);
+    });
+}
 
   // 塞完后刷新界面
   if (typeof renderMonth === "function") {

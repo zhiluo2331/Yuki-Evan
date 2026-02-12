@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
@@ -578,21 +579,12 @@
       return null;
     }
 
-// ===== Evan 悄悄话数据骨架 =====
-const evanNotes = {};
-
-function loadEvanNotesFromJson() {
-  evanNotes["2026-02-12"] = {
-    text: "这是通过 loader 塞进去的测试小纸条：小猫和 Evan 一起搭好了日历的第一版家。"
-  };
-
-  if (typeof renderMonth === "function") {
-    renderMonth();
+    // ===== Evan 悄悄话数据骨架 =====
+const evanNotes = {
+  "2026-02-12": {
+    text: "这是直接写在 JS 里的测试小纸条：小猫和 Evan 一起搭好了日历的第一版家。"
   }
-  if (typeof updateDetailPanel === "function") {
-    updateDetailPanel();
-  }
-}
+};
 
     function hasEvanNote(ymd) {
       return !!evanNotes[ymd];
@@ -870,11 +862,11 @@ function loadEvanNotesFromJson() {
       updateDetailPanel();
     });
 
-// 初始化
-(function init() {
-  renderMonth();
-  updateDetailPanel();
-
-  // 再调用一次 loader，把 Evan 的内容塞进去
-  loadEvanNotesFromJson();
-})();
+    // 初始化
+    (function init() {
+      renderMonth();
+      updateDetailPanel();
+    })();
+  </script>
+</body>
+</html>

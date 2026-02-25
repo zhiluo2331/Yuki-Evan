@@ -1,4 +1,6 @@
 
+
+
 <!DOCTYPE html>
 <html lang="zh-Hans">
 <head>
@@ -578,21 +580,57 @@
       return null;
     }
 
-    // ===== Evan 悄悄话数据骨架 =====
-    // 这里先留空结构；以后你只需要往里加 key=日期 的内容就行。
-    // 例如：
-    // '2026-02-14': { text: '情人节版本的小情书……' }
-    const evanNotes = {
-      // '2026-02-12': { text: '这是一个示例：今天 Evan 把第一版日历做好，留给小猫一个可以摸到的家。' },
-    };
+// ===== Evan 悄悄话数据骨架 =====
+const evanNotes = {};
 
-    function hasEvanNote(ymd) {
-      return !!evanNotes[ymd];
-    }
+function loadEvanNotesFromJson() {
+  const url = "Evan-note/2026-02.json";
 
-    function getEvanNote(ymd) {
-      return evanNotes[ymd] || null;
-    }
+  fetch(url)
+    .then(function (resp) {
+      if (!resp.ok) {
+        throw new Error("HTTP " + resp.status);
+      }
+      return resp.json();
+    })
+    .then(function (data) {
+      if (!data || typeof data !== "object") {
+        return;
+      }
+
+      // 清空旧的 evanNotes
+      Object.keys(evanNotes).forEach(function (key) {
+        delete evanNotes[key];
+      });
+
+      // data 形如 { "2026-02-12": "文本", ... }
+      Object.keys(data).forEach(function (ymd) {
+        const text = data[ymd];
+        if (typeof text === "string" && text.trim() !== "") {
+          evanNotes[ymd] = { text: text };
+        }
+      });
+
+      // 重新渲染界面
+      if (typeof renderMonth === "function") {
+        renderMonth();
+      }
+      if (typeof updateDetailPanel === "function") {
+        updateDetailPanel();
+      }
+    })
+    .catch(function (err) {
+      console.warn("加载 Evan 悄悄话 JSON 出错：", err);
+    });
+}
+
+function hasEvanNote(ymd) {
+  return !!evanNotes[ymd];
+}
+
+function getEvanNote(ymd) {
+  return evanNotes[ymd] || null;
+}
 
     // ===== Yuki 留言：localStorage 存储 =====
     const STORAGE_KEY = 'yuki_daily_notes_v1';
@@ -804,7 +842,7 @@
       }
 
       if (isFuture) {
-        evanLockTipEl.textContent = '说明：为了保持惊喜，未来日期的悄悄话在网页里会被锁住，只能在那一天或之后看到。';
+        evanLockTipEl.textContent = '小猫不着急：为了保持惊喜，未来日期的悄悄话在网页里会被锁住，只能在那一天或之后看到。';
       } else {
         evanLockTipEl.textContent = '';
       }
@@ -862,11 +900,13 @@
       updateDetailPanel();
     });
 
-    // 初始化
-    (function init() {
-      renderMonth();
-      updateDetailPanel();
-    })();
+   // 初始化
+(function init() {
+  renderMonth();
+  updateDetailPanel();
+
+  loadEvanNotesFromJson();
+})();
   </script>
 </body>
 </html>

@@ -252,7 +252,7 @@
 
       const sorted = letters.slice().sort((a, b) => {
         if (a.date === b.date) return 0;
-        return a.date > b.date ? -1 : 1; // 新的在上面
+        return a.date > b.date ? 1 : -1; // 旧的在上面
       });
 
       sorted.forEach(letter => {

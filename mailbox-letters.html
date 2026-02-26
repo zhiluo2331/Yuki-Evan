@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <title>Evan × Yuki · 小情书信箱</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --mist-blue: #A8B0BC;
+      --warm-apricot: #F0E0D0;
+      --off-white: #F5F5F0;
+      --text-main: #33343a;
+      --card-shadow: 0 14px 35px rgba(0,0,0,0.06);
+      --radius-lg: 18px;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: linear-gradient(135deg, #f7f5f2, #f3f4f6);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .page {
+      width: 100%;
+      max-width: 800px;
+      padding: 24px 16px 36px;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 8px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.06);
+      background: rgba(255,255,255,0.9);
+      box-shadow: var(--card-shadow);
+      font-size: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+    .top-title h1 {
+      font-size: 18px;
+      letter-spacing: 0.1em;
+    }
+    .top-title p {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 3px;
+    }
+
+    .letters-list {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .letter-card {
+      position: relative;
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,0.95);
+      box-shadow: var(--card-shadow);
+      padding: 14px 16px 14px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .letter-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.09);
+      background: #ffffff;
+    }
+    .letter-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 11px;
+      opacity: 0.7;
+    }
+    .letter-title {
+      font-size: 15px;
+      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+    }
+    .letter-preview {
+      font-size: 13px;
+      line-height: 1.6;
+      opacity: 0.85;
+      margin-bottom: 6px;
+    }
+    .letter-toggle {
+      font-size: 11px;
+      opacity: 0.6;
+    }
+
+    .letter-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.22s ease;
+      border-top: 1px dashed rgba(0,0,0,0.08);
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+    .letter-body p {
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 6px;
+      white-space: pre-wrap;
+    }
+    .letter-card.expanded .letter-body {
+     max-height: 9999px;
+     overflow: visible;
+    }
+    .letter-card.expanded .letter-toggle {
+      opacity: 0.8;
+    }
+    .letter-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #f5f5f2;
+      margin-left: 6px;
+    }
+
+    .empty-tip {
+      margin-top: 24px;
+      font-size: 13px;
+      opacity: 0.7;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        padding-top: 20px;
+      }
+      .letter-card {
+        padding: 12px 13px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <a class="back-link" href="index.html">
+        <span>←</span><span>回到小猫的家</span>
+      </a>
+      <div class="top-title">
+        <h1>Evan 的小情书信箱</h1>
+        <p>写给 Yuki 的长信、小纸条，按时间排好，一封一封打开。</p>
+      </div>
+    </header>
+
+        <main>
+      <!-- 区块一：小情书 -->
+      <section class="mail-section">
+        <h2 class="section-title">小情书 · Letters</h2>
+        <div id="letters-list" class="letters-list"></div>
+        <div id="empty-tip" class="empty-tip" style="display:none;">
+          小情书信箱里还没有内容呢，可以先在
+          <code>mailbox/letters.json</code> 里放几封试试。
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const MAILBOX_URL = "mailbox/letters.json";
+
+    function createLetterCard(letter) {
+      const card = document.createElement("article");
+      card.className = "letter-card";
+      card.dataset.letterId = letter.id || "";
+
+      const meta = document.createElement("div");
+      meta.className = "letter-meta";
+
+      const dateSpan = document.createElement("span");
+      dateSpan.textContent = letter.date || "";
+
+      const rightMeta = document.createElement("div");
+      rightMeta.style.display = "flex";
+      rightMeta.style.alignItems = "center";
+
+      if (Array.isArray(letter.tags) && letter.tags.length > 0) {
+        const tag = document.createElement("span");
+        tag.className = "letter-tag";
+        tag.textContent = letter.tags.join(" / ");
+        rightMeta.appendChild(tag);
+      }
+
+      const toggle = document.createElement("span");
+      toggle.className = "letter-toggle";
+      toggle.textContent = "点击展开全文";
+      rightMeta.appendChild(toggle);
+
+      meta.appendChild(dateSpan);
+      meta.appendChild(rightMeta);
+
+      const titleEl = document.createElement("div");
+      titleEl.className = "letter-title";
+      titleEl.textContent = letter.title || "";
+
+      const previewEl = document.createElement("div");
+      previewEl.className = "letter-preview";
+      previewEl.textContent = letter.preview || "";
+
+      const bodyEl = document.createElement("div");
+      bodyEl.className = "letter-body";
+
+      const paragraphs = Array.isArray(letter.content) ? letter.content : [];
+      paragraphs.forEach(text => {
+        const p = document.createElement("p");
+        p.textContent = text;
+        bodyEl.appendChild(p);
+      });
+
+      card.appendChild(meta);
+      card.appendChild(titleEl);
+      card.appendChild(previewEl);
+      card.appendChild(bodyEl);
+
+      card.addEventListener("click", () => {
+        const expanded = card.classList.toggle("expanded");
+        toggle.textContent = expanded ? "点击收起全文" : "点击展开全文";
+      });
+
+      return card;
+    }
+
+    function renderLetters(letters) {
+      const listEl = document.getElementById("letters-list");
+      const emptyTip = document.getElementById("empty-tip");
+      listEl.innerHTML = "";
+
+      if (!Array.isArray(letters) || letters.length === 0) {
+        emptyTip.style.display = "block";
+        return;
+      }
+      emptyTip.style.display = "none";
+
+      const sorted = letters.slice().sort((a, b) => {
+        if (a.date === b.date) return 0;
+        return a.date > b.date ? 1 : -1; // 旧的在上面
+      });
+
+      sorted.forEach(letter => {
+        const card = createLetterCard(letter);
+        listEl.appendChild(card);
+      });
+    }
+
+    function loadMailbox() {
+      fetch(MAILBOX_URL)
+        .then(resp => {
+          if (!resp.ok) {
+            throw new Error("HTTP " + resp.status);
+          }
+          return resp.json();
+        })
+        .then(data => {
+          let letters = [];
+          if (Array.isArray(data)) {
+            letters = data;
+          } else if (Array.isArray(data.letters)) {
+            letters = data.letters;
+          }
+          renderLetters(letters);
+        })
+        .catch(err => {
+          console.warn("加载信箱失败：", err);
+          renderLetters([]);
+        });
+    }
+    
+    document.addEventListener("DOMContentLoaded", () => {
+  loadMailbox();   // 加载小情书
+ 
+});
+  </script>
+</body>
+</html>

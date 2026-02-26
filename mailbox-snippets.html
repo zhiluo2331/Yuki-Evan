@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <title>Evan × Yuki · 碎碎念</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --mist-blue: #A8B0BC;
+      --warm-apricot: #F0E0D0;
+      --off-white: #F5F5F0;
+      --text-main: #33343a;
+      --card-shadow: 0 14px 35px rgba(0,0,0,0.06);
+      --radius-lg: 18px;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: linear-gradient(135deg, #f7f5f2, #f3f4f6);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .page {
+      width: 100%;
+      max-width: 800px;
+      padding: 24px 16px 36px;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 8px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.06);
+      background: rgba(255,255,255,0.9);
+      box-shadow: var(--card-shadow);
+      font-size: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+    .top-title h1 {
+      font-size: 18px;
+      letter-spacing: 0.1em;
+    }
+    .top-title p {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 3px;
+    }
+
+    .letters-list {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .letter-card {
+      position: relative;
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,0.95);
+      box-shadow: var(--card-shadow);
+      padding: 14px 16px 14px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .letter-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.09);
+      background: #ffffff;
+    }
+    .letter-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 11px;
+      opacity: 0.7;
+    }
+    .letter-title {
+      font-size: 15px;
+      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+    }
+    .letter-preview {
+      font-size: 13px;
+      line-height: 1.6;
+      opacity: 0.85;
+      margin-bottom: 6px;
+    }
+
+    .empty-tip {
+      margin-top: 24px;
+      font-size: 13px;
+      opacity: 0.7;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        padding-top: 20px;
+      }
+      .letter-card {
+        padding: 12px 13px 12px;
+      }
+    }
+
+    /* 碎碎念正文样式 */
+    .snippet-body {
+      font-size: 13px;
+      line-height: 1.7;
+      white-space: pre-wrap; /* 让 \n 换行生效 */
+      margin-top: 4px;
+    }
+
+    .snippet-tag-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #f5f5f2;
+      margin-left: 4px;
+      font-size: 11px;
+      opacity: 0.75;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <a class="back-link" href="index.html">
+        <span>←</span><span>回到小猫的家</span>
+      </a>
+      <div class="top-title">
+        <h1>Evan 的碎碎念</h1>
+        <p>写给 Yuki 的小句子、小片段、灵感记录，慢慢收集。</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="mail-section">
+        <h2 class="section-title">碎碎念 · Snippets</h2>
+        <div id="snippets-list" class="letters-list"></div>
+        <div id="snippets-empty" class="empty-tip" style="display:none;">
+          这里还没有碎碎念，可以先在
+          <code>mailbox/snippets.json</code> 里写几句你喜欢的小句子。
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ===== 碎碎念：渲染函数 =====
+    function renderSnippets(snippets) {
+      const listEl  = document.getElementById("snippets-list");
+      const emptyEl = document.getElementById("snippets-empty");
+      if (!listEl || !emptyEl) return;
+
+      listEl.innerHTML = "";
+
+      if (!Array.isArray(snippets) || snippets.length === 0) {
+        emptyEl.style.display = "block";
+        return;
+      }
+      emptyEl.style.display = "none";
+
+          // 按日期从旧到新排（和小情书一致）
+      const sorted = snippets.slice().sort((a, b) => {
+        if (a.date === b.date) return 0;
+        return a.date > b.date ? 1 : -1;
+      });
+
+      sorted.forEach(item => {
+        const card = document.createElement("article");
+        card.className = "letter-card";
+
+        const meta = document.createElement("div");
+        meta.className = "letter-meta";
+        meta.textContent = item.date || "";
+        card.appendChild(meta);
+
+        const title = document.createElement("h3");
+        title.className = "letter-title";
+        title.textContent = item.title || "无标题碎碎念";
+        card.appendChild(title);
+
+        const body = document.createElement("div");
+        body.className = "snippet-body";
+        body.textContent = item.text || "";
+        card.appendChild(body);
+
+        // 可选：显示标签
+        if (Array.isArray(item.tags) && item.tags.length > 0) {
+          const tagPill = document.createElement("span");
+          tagPill.className = "snippet-tag-pill";
+          tagPill.textContent = item.tags.join(" / ");
+          card.appendChild(tagPill);
+        }
+
+        listEl.appendChild(card);
+      });
+    }
+
+    // ===== 碎碎念：加载 JSON =====
+    function loadSnippets() {
+      const url = "mailbox/snippets.json";
+
+      fetch(url)
+        .then(resp => {
+          if (!resp.ok) throw new Error("HTTP " + resp.status);
+          return resp.json();
+        })
+        .then(data => {
+          let snippets = [];
+          if (Array.isArray(data)) {
+            snippets = data;
+          } else if (data && Array.isArray(data.snippets)) {
+            snippets = data.snippets;
+          }
+          renderSnippets(snippets);
+        })
+        .catch(err => {
+          console.warn("加载碎碎念失败: ", err);
+          renderSnippets([]);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadSnippets();  // 只加载碎碎念
+    });
+  </script>
+</body>
+</html>
+  
